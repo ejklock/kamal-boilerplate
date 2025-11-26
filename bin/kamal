@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Load environment variables from .env.kamal
+if [ -f .env.kamal ]; then
+  set -a
+  source .env.kamal
+  set +a
+else
+  echo "Warning: .env.kamal file not found"
+fi
+
+# Execute kamal with all passed arguments
+kamal "$@"
