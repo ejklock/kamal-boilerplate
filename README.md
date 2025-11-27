@@ -30,13 +30,9 @@ Kamal is a deployment tool that simplifies deploying containerized applications 
 │   └── kamal                 # Kamal wrapper script (loads .env.kamal)
 ├── config/
 │   ├── deploy.yml            # Main Kamal deployment configuration
-│   └── mysql/
-│       └── production.cnf    # MySQL configuration
 ├── src/
 │   ├── Dockerfile            # Development Dockerfile
 │   └── Dockerfile.prd        # Production Dockerfile
-├── db/
-│   └── production.sql        # Database initialization script
 └── .kamal/
     └── secrets               # Environment secrets configuration
 ```
