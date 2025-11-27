@@ -109,23 +109,23 @@ Create a `.env.kamal` file in the root directory with the following variables:
 
 ```bash
 # Application Configuration
-export APP_NAME="my-app"
-export IMAGE_NAME="my-app"
-export APP_HOST="yourdomain.com"
+APP_NAME="my-app"
+IMAGE_NAME="my-app"
+APP_HOST="yourdomain.com"
 
 # Server Configuration
-export SERVER_IP="192.168.0.1"
-export SSH_USER="root"
-export SSH_PORT="22"
-export SSH_KEY_PATH="~/.ssh/id_rsa"
+SERVER_IP="192.168.0.1"
+SSH_USER="root"
+SSH_PORT="22"
+SSH_KEY_PATH="~/.ssh/id_rsa"
 
 # Registry Configuration
-export REGISTRY_SERVER="localhost:5555"  # or docker.io, ghcr.io, etc.
-export REGISTRY_USERNAME="your-username"
-export KAMAL_REGISTRY_PASSWORD="your-registry-password"
+REGISTRY_SERVER="localhost:5555"  # or docker.io, ghcr.io, etc.
+REGISTRY_USERNAME="your-username"
+KAMAL_REGISTRY_PASSWORD="your-registry-password"
 
 # Database Configuration
-export MYSQL_ROOT_PASSWORD="your-secure-password"
+MYSQL_ROOT_PASSWORD="your-secure-password"
 ```
 
 **Important:** Add `.env.kamal` to your `.gitignore` file to prevent committing sensitive credentials:
