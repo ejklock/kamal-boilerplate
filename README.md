@@ -7,7 +7,7 @@ A boilerplate project for deploying applications using [Kamal](https://kamal-dep
 This boilerplate provides a ready-to-use foundation for deploying containerized applications with Kamal. It includes:
 
 - **Pre-configured deployment setup** with MySQL and Redis accessories
-- **Environment variable management** through a wrapper script
+- **Opinionated environment variable management through a lightweight wrapper script (optional)
 - **Zero-downtime deployment** configuration
 
 The goal is to eliminate the initial setup complexity and provide a tested starting point for deploying applications to your own servers, whether you're deploying a simple web app or a complex multi-service application.
