@@ -2,6 +2,10 @@
 
 A boilerplate project for deploying applications using [Kamal](https://kamal-deploy.org/) (formerly MRSK), a deployment tool from 37signals that allows you to deploy web applications to any server using Docker containers.
 
+This boilerplate includes a small, opinionated bash wrapper around Kamal to keep deployment configuration explicit, reproducible, and independent from Ruby-specific tooling.
+
+If you prefer a simpler setup, you can skip the wrapper and use tools like dotenv or manual environment exports instead.
+
 ## Objective
 
 This boilerplate provides a ready-to-use foundation for deploying containerized applications with Kamal. It includes:
