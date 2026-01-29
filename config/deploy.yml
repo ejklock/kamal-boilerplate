@@ -19,13 +19,18 @@ servers:
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
 proxy:
   ssl: false
-  host: <%= ENV["APP_HOST"] || "192.168.0.1" %>
+  host: <%= ENV["SERVER_IP"] || "192.168.0.1" %>
   # Proxy connects to your container on port 80 by default.
-  # app_port: 3000
+  app_port: 8080
+  response_timeout: 240
+
+  # healthcheck:
+  #   path: /up
+  #   interval: 10
+  #   timeout: 2400
 
 # Credentials for your image host.
 registry:
-  server: <%= ENV["REGISTRY_SERVER"] || "localhost:5555" %>
   username: <%= ENV["REGISTRY_USERNAME"] %>
   password:
     - KAMAL_REGISTRY_PASSWORD
@@ -33,20 +38,36 @@ registry:
 # Configure builder setup.
 builder:
   arch: arm64
-  remote: ssh://<%= ENV["SSH_USER"] || "root" %>@<%= ENV["SERVER_IP"] %>
+  remote: ssh://laravel-kamal
   context: .
+  local: false
   dockerfile: src/Dockerfile.prd
 
   # Pass in additional build args needed for your Dockerfile.
   # args:
   #   RUBY_VERSION: <%= ENV["RBENV_VERSION"] || ENV["rvm_ruby_string"] || "#{RUBY_ENGINE}-#{RUBY_ENGINE_VERSION}" %>
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
-#
-# env:
-#   clear:
-#     DB_HOST: 192.168.0.2
-#   secret:
-#     - RAILS_MASTER_KEY
+env:
+  clear:
+    APP_NAME: <%= ENV["APP_NAME"] || "laravel" %>
+    APP_ENV: production
+    APP_DEBUG: false
+    LOG_CHANNEL: stderr
+    LOG_LEVEL: info
+    DB_CONNECTION: mysql
+    DB_HOST: <%= ENV["DB_HOST"] %>
+    DB_PORT: <%= ENV["DB_PORT"] || 3306 %>
+    DB_DATABASE: <%= ENV["MYSQL_DATABASE"] || "laravel" %>
+    DB_USERNAME: <%= ENV["MYSQL_USER"] || "laravel" %>
+    CACHE_DRIVER: <%= ENV["CACHE_DRIVER"] || "redis" %>
+    SESSION_DRIVER: <%= ENV["SESSION_DRIVER"] || "redis" %>
+    QUEUE_CONNECTION: <%= ENV["QUEUE_CONNECTION"] || "redis" %>
+    REDIS_HOST: <%= ENV["REDIS_HOST"] %>
+    REDIS_PORT: <%= ENV["REDIS_PORT"] || 6379 %>
+  secret:
+    - APP_KEY
+    - DB_PASSWORD
+    - REDIS_PASSWORD
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal app logs -r job" will tail logs from the first server in the job section.
@@ -71,7 +92,9 @@ volumes:
 # hitting 404 on in-flight requests. Combines all files from new and old
 # version inside the asset_path.
 #
-asset_path: /var/www/public/assets
+asset_path: /var/www/html/public/build
+
+deploy_timeout: 60
 
 # Configure rolling deploys by setting a wait time between batches of restarts.
 #
@@ -83,22 +106,23 @@ asset_path: /var/www/public/assets
 #
 accessories:
   db:
-    image: mysql:8.0
+    image: mysql:8.4
     host: <%= ENV["SERVER_IP"] %>
-    port: 3306
+    port: "127.0.0.1:3306:3306"
+    cmd: --mysql-native-password=ON
     env:
       clear:
         MYSQL_ROOT_HOST: "%"
+        MYSQL_DATABASE: <%= ENV["MYSQL_DATABASE"] || "laravel" %>
+        MYSQL_USER: <%= ENV["MYSQL_USER"] || "laravel" %>
       secret:
         - MYSQL_ROOT_PASSWORD
-    files:
-      - config/mysql/production.cnf:/etc/mysql/my.cnf
-      - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
+        - MYSQL_PASSWORD
     directories:
       - data:/var/lib/mysql
   redis:
-    image: valkey/valkey:8
-    host: <%= ENV["SERVER_IP"] || "192.168.0.2" %>
-    port: 6379
+    image: redis:alpine
+    host: <%= ENV["SERVER_IP"] %>
+    port: "127.0.0.1:6379:6379"
     directories:
       - data:/data
